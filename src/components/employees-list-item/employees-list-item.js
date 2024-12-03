@@ -12,7 +12,7 @@ const EmployeesListItem = (props) => {
     }
 
     const handleSalaryChange = (e) => {
-        const newSalary = e.target.value.replace(/\$/g, '');
+        const newSalary = e.target.value;
         onValueChange(id, newSalary);
     }
 

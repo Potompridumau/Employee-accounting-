@@ -11,8 +11,9 @@ import './app.css';
 class App extends Component {
     constructor(props) {
         super(props);
+        const storedData = JSON.parse(localStorage.getItem('employeesData'));
         this.state = {
-            data: [
+            data: storedData || [
                 { name: 'John C.', salary: 800, increase: false, rise: true, id: 1 },
                 { name: 'Alex M.', salary: 3000, increase: true, rise: false, id: 2 },
                 { name: 'Carl W.', salary: 5000, increase: false, rise: false, id: 3 }
@@ -23,10 +24,16 @@ class App extends Component {
         this.maxId = 4;
     }
 
+    saveDataToLocalStorage = (data) => {
+        localStorage.setItem('employeesData', JSON.stringify(data));
+    }
+
     deleteItem = (id) => {
         this.setState(({ data }) => {
+            const newData = data.filter(item => item.id !== id);
+            this.saveDataToLocalStorage(newData);
             return {
-                data: data.filter(item => item.id !== id)
+                data: newData
             }
         })
     }
@@ -41,7 +48,7 @@ class App extends Component {
         }
         this.setState(({ data }) => {
             const newArr = [...data, newItem];
-
+            this.saveDataToLocalStorage(newArr);
             return {
                 data: newArr
             }
@@ -49,14 +56,18 @@ class App extends Component {
     }
 
     onToggleProp = (id, prop) => {
-        this.setState(({ data }) => ({
-            data: data.map(item => {
+        this.setState(({ data }) => {
+            const newData = data.map(item => {
                 if (item.id === id) {
                     return { ...item, [prop]: !item[prop] }
                 }
                 return item;
-            })
-        }))
+            });
+            this.saveDataToLocalStorage(newData);
+            return {
+                data: newData
+            }
+        })
     }
 
     searchEmp = (items, term) => {
@@ -88,15 +99,20 @@ class App extends Component {
     }
 
     onValueChange = (id, salary) => {
-        this.setState(({ data }) => ({
-            data: data.map(item => {
+        this.setState(({ data }) => {
+            const newData = data.map(item => {
                 if (item.id === id) {
-                    return { ...item, salary }
+                    return { ...item, salary: parseInt(salary, 10) }
                 }
                 return item;
-            })
-        }))
+            });
+            this.saveDataToLocalStorage(newData);
+            return {
+                data: newData
+            }
+        })
     }
+
 
     render() {
         const { data, term, filter } = this.state,
